@@ -30,5 +30,5 @@ async function asyncMain() {
   console.log(result);
 }
 
-promiseMain();
-//asyncMain;
+//promiseMain();
+asyncMain();
