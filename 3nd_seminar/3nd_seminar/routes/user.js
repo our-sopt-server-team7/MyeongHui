@@ -5,12 +5,19 @@ let util = require("../modules/util");
 let statusCode = require("../modules/statusCode");
 let resMessage = require("../modules/responseMessage");
 
+// 회원가입
 router.post("/signup", async (req, res) => {
-  //1. request body에서 값을 읽어온다.
-  const { id, name, password, email } = req.body;
+  // 1단계 요청 받고 응답주기 
+  // request body에서 값을 읽어온다.
+  const {
+    id,
+    name,
+    password,
+    email
+  } = req.body;
 
-  // 예외처리
-  // 1.parameter
+  // 2단계 예외처리
+  // 1. request data 확인 - 없다면 Bad Request 반환
   if (!id || !name || !password || !email) {
     res
       .status(statusCode.BAD_REQUEST)
@@ -18,7 +25,7 @@ router.post("/signup", async (req, res) => {
     return;
   }
 
-  // 2.아이디 중복 체크
+  // 2. 아이디 중복 체크
   if (UserModel.filter((it) => it.id == id).length > 0) {
     res
       .status(statusCode.BAD_REQUEST)
@@ -26,7 +33,12 @@ router.post("/signup", async (req, res) => {
     return;
   }
 
-  UserModel.push({ id, name, password, email });
+  UserModel.push({
+    id,
+    name,
+    password,
+    email
+  });
   res.status(200).send(
     util.success(statusCode.OK, resMessage.CREATED_USER, {
       userId: id,
@@ -34,9 +46,13 @@ router.post("/signup", async (req, res) => {
   );
 });
 
+// 로그인
 router.post("/signin", async (req, res) => {
   //request body에서 데이터 가져오기
-  const { id, password } = req.body;
+  const {
+    id,
+    password
+  } = req.body;
 
   // request dat 확인 - 없다면 Null Value 반환
   if (!id || !password) {
@@ -56,7 +72,7 @@ router.post("/signin", async (req, res) => {
   }
 
   // 비밀번호 확인 - 없다면 Miss match password 반환
-  if (user[0].password != password) {
+  if (user[0].password !== password) {
     res
       .status(statusCode.BAD_REQUEST)
       .send(util.fail(statusCode.BAD_REQUEST, resMessage.MISS_MATCH_PW));
