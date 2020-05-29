@@ -33,12 +33,31 @@ router.post("/signup", async (req, res) => {
     return;
   }
 
+  // 3차 세미나 MISSION_LEVEL_2
+  // password hash
+
+  // crypto 모듈 사용
+  const crypto = require("crypto");
+  const salt = crypto.randomBytes(32).toString("hex");
+  const hashPw = crypto.pbkdf2Sync(
+    password,
+    salt,
+    1,
+    32,
+    "sha512").toString("hex");
+
+  console.log("salt: ", salt);
+  console.log("hashPw: ", hashPw);
+
+  // hash한 pw랑 salt 저장
   UserModel.push({
     id,
     name,
-    password,
+    password: hashPw,
+    salt,
     email
   });
+
   res.status(200).send(
     util.success(statusCode.OK, resMessage.CREATED_USER, {
       userId: id,
@@ -87,6 +106,7 @@ router.post("/signin", async (req, res) => {
   );
 });
 
+// 3차 세미나 MISSION_LEVEL_1
 // 프로필 조회
 router.post("/profile/:id", async (req, res) => {
   // request body에서 데이터 가져오기
