@@ -52,8 +52,7 @@ router.post("/signup", async (req, res) => {
 router.post("/signin", async (req, res) => {
   //request body에서 데이터 가져오기
   const {
-    id,
-    password
+    id
   } = req.body;
 
   // request dat 확인 - 없다면 Null Value 반환
@@ -76,6 +75,38 @@ router.post("/signin", async (req, res) => {
   res.status(statusCode.OK).send(
     util.success(statusCode.OK, resMessage.LOGIN_SUCCESS, {
       ID: id,
+    })
+  );
+});
+
+router.get("/:id", async (req, res) => {
+  //request body에서 데이터 가져오기
+  const id = req.params.id
+
+  // request dat 확인 - 없다면 Null Value 반환
+  if (!id) {
+    res
+      .status(statusCode.BAD_REQUEST)
+      .send(util.fail(statusCode.BAD_REQUEST, resMessage.NULL_VALUE));
+    return;
+  }
+
+  const result = await UserModel.getUserById(id);
+
+  //존재하는 회원인지 확인
+  if (result) {
+    res
+      .status(statusCode.BAD_REQUEST)
+      .send(util.fail(statusCode.BAD_REQUEST, resMessage.NO_USER));
+    return;
+  }
+
+  // 성공 - login success와 함께 user id 반환
+  res.status(statusCode.OK).send(
+    util.success(statusCode.OK, resMessage.READ_PROFILE_SUCCESS, {
+      id: result[0].userIdx,
+      name: result[0].name,
+      email: result[0].email
     })
   );
 });

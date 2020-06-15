@@ -25,7 +25,7 @@ const user = {
     const query = `SELECT * FROM ${table} WHERE id="${id}"`;
     try {
       const result = await pool.queryParam(query);
-      console.log(result)
+      console.log(id)
       if (result.length === 0) {
         return false;
       } else return true;
@@ -43,10 +43,26 @@ const user = {
     const query = `SELECT * FROM ${table} WHERE id="${id}"`;
     try {
       const result = await pool.queryParam(query);
-      console.log(result)
       if (result.length === 0) {
         return false;
       } else return true;
+    } catch (err) {
+      if (err.errno == 1062) {
+        console.log('checkUser ERROR : ', err.errno, err.code);
+        return -1;
+      }
+      console.log('checkUser ERROR : ', err);
+      throw err;
+    }
+  },
+
+  getUserById: async (id) => {
+    const query = `SELECT * FROM ${table} WHERE id="${id}"`;
+    try {
+      const result = await pool.queryParam(query);
+      console.log(id)
+      console.log(result)
+      return result;
     } catch (err) {
       if (err.errno == 1062) {
         console.log('checkUser ERROR : ', err.errno, err.code);
